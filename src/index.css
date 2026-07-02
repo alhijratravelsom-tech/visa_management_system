@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9ff;
+    color: #111c2d;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    user-select: none;
+  }
+}
+
+@layer components {
+  /* Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c4c6ce;
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #74777e;
+  }
+
+  /* Status chips */
+  .chip {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wider uppercase;
+  }
+  .chip-pending {
+    @apply bg-amber-50 text-amber-700 border border-amber-200;
+  }
+  .chip-approved {
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+  .chip-rejected {
+    @apply bg-red-50 text-red-700 border border-red-200;
+  }
+  .chip-processing {
+    @apply bg-blue-50 text-blue-700 border border-blue-200;
+  }
+  .chip-submitted {
+    @apply bg-indigo-50 text-indigo-700 border border-indigo-200;
+  }
+  .chip-cancelled {
+    @apply bg-gray-50 text-gray-600 border border-gray-200;
+  }
+  .chip-draft {
+    @apply bg-slate-50 text-slate-600 border border-slate-200;
+  }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 transition-colors rounded-sm cursor-pointer;
+  }
+  .nav-item-active {
+    @apply bg-secondary-container text-on-secondary-container border-l-4 border-secondary;
+  }
+  .nav-item-inactive {
+    @apply text-on-primary-container hover:bg-white/10;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-surface-container-lowest border border-outline-variant rounded-lg shadow-card;
+  }
+
+  /* Input */
+  .input-field {
+    @apply w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-body-md
+           focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary transition-all;
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply bg-primary-container text-on-primary px-4 py-2 rounded-lg text-body-md font-semibold
+           hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-secondary-fixed text-secondary px-4 py-2 rounded-lg text-body-md font-semibold
+           hover:bg-secondary-fixed-dim transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-ghost {
+    @apply border border-outline-variant text-on-surface px-4 py-2 rounded-lg text-body-md font-semibold
+           hover:bg-surface-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-danger {
+    @apply bg-error text-on-error px-4 py-2 rounded-lg text-body-md font-semibold
+           hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+}
