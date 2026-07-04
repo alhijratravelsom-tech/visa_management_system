@@ -52,11 +52,20 @@ export default function NewApplication() {
     notes: '',
   })
 
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [loadingData, setLoadingData] = useState(true)
+
   useEffect(() => {
-    Promise.all([listOffices(), listVisaTypes()]).then(([o, v]) => {
-      setOffices(o)
-      setVisaTypes(v)
-    })
+    Promise.all([listOffices(), listVisaTypes()])
+      .then(([o, v]) => {
+        setOffices(o)
+        setVisaTypes(v)
+      })
+      .catch((err) => {
+        console.error('Failed to load form data:', err)
+        setLoadError(err?.message ?? 'Failed to load data')
+      })
+      .finally(() => setLoadingData(false))
   }, [])
 
   const handlePassportFile = (file: File) => {
@@ -155,6 +164,21 @@ export default function NewApplication() {
       setSubmitting(false)
     }
   }
+
+  if (loadingData) return (
+    <div className="flex items-center justify-center py-20">
+      <Spinner size={32} />
+    </div>
+  )
+
+  if (loadError) return (
+    <div className="card p-6 text-center space-y-3">
+      <span className="material-symbols-outlined text-error text-[40px]">error</span>
+      <p className="text-body-md text-on-surface font-medium">Failed to load page data</p>
+      <p className="text-body-sm text-on-surface-variant">{loadError}</p>
+      <button className="btn-primary" onClick={() => window.location.reload()}>Retry</button>
+    </div>
+  )
 
   return (
     <div className="max-w-4xl mx-auto space-y-5">
