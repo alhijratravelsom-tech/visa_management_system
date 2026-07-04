@@ -38,12 +38,20 @@ export async function ocrPassportImage(base64Image: string): Promise<PassportOCR
     }
   )
 
+  const data = await response.json().catch(() => null)
+
   if (!response.ok) {
-    throw new Error(`Vision API error: ${response.statusText}`)
+    const apiMessage = data?.error?.message || response.statusText || 'Unknown error'
+    throw new Error(`Vision API error (${response.status}): ${apiMessage}`)
   }
 
-  const data = await response.json()
-  const rawText: string = data.responses?.[0]?.fullTextAnnotation?.text ?? ''
+  // Vision can also return a per-request error with HTTP 200
+  const reqError = data?.responses?.[0]?.error
+  if (reqError?.message) {
+    throw new Error(`Vision API error: ${reqError.message}`)
+  }
+
+  const rawText: string = data?.responses?.[0]?.fullTextAnnotation?.text ?? ''
 
   return parseMRZ(rawText)
 }
