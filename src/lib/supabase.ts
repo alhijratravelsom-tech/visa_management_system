@@ -1,19 +1,27 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { getConfig } from './config'
 
-function buildClient() {
+const PLACEHOLDER_URL = 'https://placeholder.supabase.co'
+
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+// Built lazily (no top-level client) so an invalid saved URL can never
+// crash the whole app at module-import time. Invalid values fall back
+// to a harmless placeholder; storage features simply won't work until
+// a valid URL is configured in Settings → API Keys.
+export function getSupabase(): SupabaseClient {
   const { supabaseUrl, supabaseAnonKey } = getConfig()
-  return createClient(
-    supabaseUrl  || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder'
-  )
+  const url = isValidHttpUrl(supabaseUrl) ? supabaseUrl : PLACEHOLDER_URL
+  const key = supabaseAnonKey?.trim() || 'placeholder'
+  if (url === PLACEHOLDER_URL && supabaseUrl) {
+    console.warn('Ignoring invalid Supabase URL from config:', supabaseUrl)
+  }
+  return createClient(url, key)
 }
-
-// Re-build client each time so it picks up config saved via Settings UI.
-// In production with .env set at build time this is effectively a singleton.
-export function getSupabase() {
-  return buildClient()
-}
-
-// Convenience default export (uses current config at import time)
-export const supabase = buildClient()
