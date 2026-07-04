@@ -1,4 +1,3 @@
-import { orderBy } from 'firebase/firestore'
 import { createDoc, listDocs, currentUserId, currentUserEmail } from './base'
 import type { AuditLog } from './types'
 
@@ -24,5 +23,5 @@ export async function logAudit(
 }
 
 export async function listAuditLogs(): Promise<AuditLog[]> {
-  return listDocs<AuditLog>(COL, [orderBy('createdAt', 'desc')], 500)
+  return listDocs<AuditLog>(COL, [], 500, { field: 'createdAt', dir: 'desc' })
 }

@@ -1,4 +1,3 @@
-import { orderBy } from 'firebase/firestore'
 import { createDoc, updateDocById, softDeleteDoc, getDocById, listDocs } from './base'
 import type { VisaType } from './types'
 
@@ -21,5 +20,5 @@ export async function getVisaType(id: string) {
 }
 
 export async function listVisaTypes(): Promise<VisaType[]> {
-  return listDocs<VisaType>(COL, [orderBy('name', 'asc')])
+  return listDocs<VisaType>(COL, [], 100, { field: 'name', dir: 'asc' })
 }

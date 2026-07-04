@@ -1,4 +1,4 @@
-import { where, orderBy } from 'firebase/firestore'
+import { where } from 'firebase/firestore'
 import { createDoc, updateDocById, softDeleteDoc, getDocById, listDocs } from './base'
 import type { Customer } from './types'
 
@@ -22,7 +22,7 @@ export async function getCustomer(id: string) {
 
 export async function listCustomers(search?: string): Promise<Customer[]> {
   // Firestore doesn't support full text search; load all and filter client-side for now
-  const customers = await listDocs<Customer>(COL, [orderBy('fullName', 'asc')], 500)
+  const customers = await listDocs<Customer>(COL, [], 500, { field: 'fullName', dir: 'asc' })
   if (!search) return customers
   const lower = search.toLowerCase()
   return customers.filter(

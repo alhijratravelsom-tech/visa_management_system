@@ -1,4 +1,4 @@
-import { where, orderBy, type QueryConstraint } from 'firebase/firestore'
+import { where, type QueryConstraint } from 'firebase/firestore'
 import { createDoc, updateDocById, listDocs } from './base'
 import type { Payment } from './types'
 
@@ -9,9 +9,9 @@ export async function createPayment(data: Omit<Payment, 'id' | 'createdAt' | 'up
 }
 
 export async function listPayments(applicationId?: string): Promise<Payment[]> {
-  const constraints: QueryConstraint[] = [orderBy('createdAt', 'desc')]
+  const constraints: QueryConstraint[] = []
   if (applicationId) constraints.push(where('applicationId', '==', applicationId))
-  return listDocs<Payment>(COL, constraints, 500)
+  return listDocs<Payment>(COL, constraints, 500, { field: 'createdAt', dir: 'desc' })
 }
 
 export async function getFinancialSummary() {

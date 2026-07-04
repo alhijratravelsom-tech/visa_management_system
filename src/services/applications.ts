@@ -1,4 +1,4 @@
-import { where, orderBy, type QueryConstraint } from 'firebase/firestore'
+import { where, type QueryConstraint } from 'firebase/firestore'
 import { createDoc, updateDocById, softDeleteDoc, getDocById, listDocs, currentUserId } from './base'
 import type { Application, ApplicationStatus } from './types'
 
@@ -54,11 +54,11 @@ export async function listApplications(filters?: {
   officeId?: string
   customerId?: string
 }): Promise<Application[]> {
-  const constraints: QueryConstraint[] = [orderBy('createdAt', 'desc')]
+  const constraints: QueryConstraint[] = []
   if (filters?.status) constraints.push(where('status', '==', filters.status))
   if (filters?.officeId) constraints.push(where('officeId', '==', filters.officeId))
   if (filters?.customerId) constraints.push(where('customerId', '==', filters.customerId))
-  return listDocs<Application>(COL, constraints, 500)
+  return listDocs<Application>(COL, constraints, 500, { field: 'createdAt', dir: 'desc' })
 }
 
 export async function getApplicationStats() {

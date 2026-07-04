@@ -88,10 +88,19 @@ export async function getDocById<T>(collectionName: string, id: string): Promise
   return fromFirestore<T>(snap.id, snap.data())
 }
 
+export interface SortSpec {
+  field: string
+  dir?: 'asc' | 'desc'
+}
+
+// NOTE: sorting is done client-side (not via Firestore orderBy) because
+// combining where('isDeleted') with orderBy requires a composite index
+// per collection/field. Lists are capped by maxLimit, so this is safe.
 export async function listDocs<T>(
   collectionName: string,
   constraints: QueryConstraint[] = [],
-  maxLimit = 100
+  maxLimit = 100,
+  sort?: SortSpec
 ): Promise<T[]> {
   const q = query(
     collection(db, collectionName),
@@ -100,7 +109,21 @@ export async function listDocs<T>(
     limit(maxLimit)
   )
   const snap = await getDocs(q)
-  return snap.docs.map((d) => fromFirestore<T>(d.id, d.data()))
+  const docs = snap.docs.map((d) => fromFirestore<T>(d.id, d.data()))
+  if (sort) {
+    const dir = sort.dir === 'desc' ? -1 : 1
+    docs.sort((a, b) => {
+      const av = (a as Record<string, unknown>)[sort.field]
+      const bv = (b as Record<string, unknown>)[sort.field]
+      if (av == null && bv == null) return 0
+      if (av == null) return 1
+      if (bv == null) return -1
+      if (av < bv) return -dir
+      if (av > bv) return dir
+      return 0
+    })
+  }
+  return docs
 }
 
 export { orderBy, where, limit }

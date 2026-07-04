@@ -1,4 +1,4 @@
-import { where, orderBy } from 'firebase/firestore'
+import { where } from 'firebase/firestore'
 import { createDoc, updateDocById, listDocs, currentUserId } from './base'
 import type { Notification } from './types'
 
@@ -12,8 +12,7 @@ export async function listNotifications(userId?: string): Promise<Notification[]
   const uid = userId ?? currentUserId()
   return listDocs<Notification>(COL, [
     where('userId', '==', uid),
-    orderBy('createdAt', 'desc'),
-  ], 100)
+  ], 100, { field: 'createdAt', dir: 'desc' })
 }
 
 export async function markAsRead(id: string) {
